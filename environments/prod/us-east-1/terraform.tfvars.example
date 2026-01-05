@@ -1,1 +1,2 @@
 ssh_allowed_cidrs = ["YOUR_PUBLIC_IP/32"]
+ec2_key_name = "your-keypair-name"

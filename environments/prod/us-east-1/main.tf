@@ -72,3 +72,21 @@ module "rds" {
 
   tags = local.base_tags
 }
+
+module "ec2" {
+  source = "../../../modules/ec2"
+
+  name_prefix = "${var.environment}-${local.region_short}"
+
+  subnet_id              = module.vpc.public_subnet_ids[0]
+  vpc_security_group_ids = [module.security_groups.app_sg_id]
+
+  instance_type     = "t3.small"
+  root_volume_size  = 30
+  associate_eip     = true
+
+  key_name  = var.ec2_key_name
+  user_data = file("${path.module}/user_data_app.sh")
+
+  tags = local.base_tags
+}
