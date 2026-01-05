@@ -12,7 +12,7 @@ locals {
 # ============================================================================
 
 module "security_groups" {
-  source = "../../security-groups"
+  source = "../security-groups"
 
   name_prefix = local.name_prefix
   purpose     = var.ec2_purpose
@@ -32,7 +32,7 @@ module "security_groups" {
 # ============================================================================
 
 module "rds" {
-  source = "../../rds"
+  source = "../rds"
 
   name_prefix = local.name_prefix
   engine       = var.rds_engine
@@ -59,7 +59,7 @@ module "rds" {
 # ============================================================================
 
 module "ec2" {
-  source   = "../../ec2"
+  source   = "../ec2"
   for_each = { for idx in range(var.ec2_count) : idx => idx }
 
   name_prefix     = local.name_prefix
