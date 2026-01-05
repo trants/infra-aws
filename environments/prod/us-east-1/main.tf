@@ -53,3 +53,22 @@ module "security_groups" {
 
   tags = local.base_tags
 }
+
+module "rds" {
+  source = "../../../modules/rds"
+
+  name_prefix = "${var.environment}-${local.region_short}"
+
+  db_name  = "app_db"
+  username = "app_user"
+
+  password_ssm_param = "/infra-aws/prod/mysql/password"
+
+  subnet_ids             = module.vpc.private_subnet_ids
+  vpc_security_group_ids = [module.security_groups.rds_sg_id]
+
+  instance_class        = "db.t3.micro"
+  backup_retention_days = 7
+
+  tags = local.base_tags
+}
