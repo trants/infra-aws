@@ -1,6 +1,12 @@
 variable "name_prefix" {
-  description = "Prefix for SG names, e.g. prod-use1"
+  description = "Prefix for SG names, e.g. infra-prod-use1"
   type        = string
+}
+
+variable "purpose" {
+  description = "Purpose of security group, e.g. api, rds, alb"
+  type        = string
+  default     = "app"
 }
 
 variable "vpc_id" {

@@ -1,6 +1,24 @@
 variable "name_prefix" {
-  description = "Prefix for RDS resources, e.g. prod-use1"
+  description = "Prefix for RDS resources, e.g. infra-prod-use1"
   type        = string
+}
+
+variable "engine" {
+  description = "Database engine: mysql, postgres, mariadb"
+  type        = string
+  default     = "mysql"
+}
+
+variable "engine_version" {
+  description = "Database engine version"
+  type        = string
+  default     = "" # Will use default if not specified
+}
+
+variable "role" {
+  description = "Database role: primary, replica, read-replica"
+  type        = string
+  default     = "primary"
 }
 
 variable "db_name" {

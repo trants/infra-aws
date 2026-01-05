@@ -25,8 +25,8 @@ resource "aws_instance" "this" {
   }
 
   tags = merge(var.tags, {
-    Name    = "${var.name_prefix}-ec2-app"
-    Service = "shared"
+    Name    = "${var.name_prefix}-ec2-${var.purpose}-${format("%02d", var.instance_index)}"
+    Service = var.purpose
     Tier    = "app"
   })
 }
@@ -36,8 +36,8 @@ resource "aws_eip" "this" {
   domain = "vpc"
 
   tags = merge(var.tags, {
-    Name    = "${var.name_prefix}-eip-app"
-    Service = "shared"
+    Name    = "${var.name_prefix}-eip-${var.purpose}-${format("%02d", var.instance_index)}"
+    Service = var.purpose
     Tier    = "app"
   })
 }

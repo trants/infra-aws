@@ -1,13 +1,12 @@
 # App SG: for EC2/ALB targets
 resource "aws_security_group" "app" {
-  name        = "${var.name_prefix}-sg-app"
-  description = "App security group (HTTP/HTTPS + restricted SSH)"
+  name        = "${var.name_prefix}-sg-${var.purpose}"
+  description = "Security group for ${var.purpose} (HTTP/HTTPS + restricted SSH)"
   vpc_id      = var.vpc_id
 
   tags = merge(var.tags, {
-    Name    = "${var.name_prefix}-sg-app"
-    Service = "shared"
-    Tier    = "app"
+    Name    = "${var.name_prefix}-sg-${var.purpose}"
+    Service = var.purpose
   })
 }
 
@@ -54,7 +53,7 @@ resource "aws_security_group" "rds" {
 
   tags = merge(var.tags, {
     Name    = "${var.name_prefix}-sg-rds"
-    Service = "shared"
+    Service = "database"
     Tier    = "data"
   })
 }

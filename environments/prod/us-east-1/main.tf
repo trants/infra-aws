@@ -1,15 +1,31 @@
 locals {
-  region_short = "use1"
-
-  base_tags = {
-    Environment = var.environment
-    Region      = var.aws_region
-    Project     = var.project
-    ManagedBy   = "terraform"
+  # Region short code mapping
+  region_short_map = {
+    us-east-1      = "use1"
+    us-west-2      = "usw2"
+    eu-west-1      = "euw1"
+    ap-southeast-1 = "apse1"
   }
 
-  vpc_name = "${var.environment}-${local.region_short}-vpc"
+  region_short = lookup(local.region_short_map, var.aws_region, replace(var.aws_region, "/-|_/", ""))
+
+  # Shared VPC name (using main project name)
+  vpc_name = "digital-assets-${var.environment}-${local.region_short}-vpc"
+
+  # Standard tags (required for billing, monitoring, compliance)
+  base_tags = {
+    Project     = var.project
+    Environment = var.environment
+    Region      = var.aws_region
+    ManagedBy   = "terraform"
+    CostCenter  = var.cost_center
+    Owner       = var.owner
+  }
 }
+
+# ============================================================================
+# SHARED VPC (used by all projects)
+# ============================================================================
 
 module "vpc" {
   source = "../../../modules/vpc"
@@ -35,58 +51,51 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  tags = local.base_tags
+  tags = merge(local.base_tags, {
+    Name = local.vpc_name
+    Type = "shared"
+  })
 }
 
-module "security_groups" {
-  source = "../../../modules/security-groups"
+# ============================================================================
+# PROJECTS (each project has EC2 and RDS)
+# ============================================================================
 
-  name_prefix = "${var.environment}-${local.region_short}"
-  vpc_id      = module.vpc.vpc_id
+module "projects" {
+  source   = "../../../modules/project"
+  for_each = var.projects
 
-  # SSH: chỉ cho IP của bạn (khuyến nghị set /32)
-  # Ví dụ: ["203.0.113.10/32"]
-  ssh_allowed_cidrs = var.ssh_allowed_cidrs
+  # Project configuration
+  project_key     = each.key
+  project_short   = each.value.project_short
+  project_full    = each.value.project_full != "" ? each.value.project_full : each.value.project_short
+  environment     = var.environment
+  region_short    = local.region_short
 
-  # Nếu chưa có ALB, tạm thời để 0.0.0.0/0 cho 80/443
-  allow_http_https_from_cidrs = ["0.0.0.0/0"]
+  # VPC configuration (shared)
+  vpc_id              = module.vpc.vpc_id
+  public_subnet_ids   = module.vpc.public_subnet_ids
+  private_subnet_ids  = module.vpc.private_subnet_ids
 
-  tags = local.base_tags
-}
+  # EC2 configuration
+  ec2_purpose       = each.value.ec2_purpose
+  ec2_instance_type = each.value.ec2_instance_type
+  ec2_count         = each.value.ec2_count
+  ec2_key_name      = var.ec2_key_name
+  ec2_user_data     = file("${path.module}/user_data_app.sh")
 
-module "rds" {
-  source = "../../../modules/rds"
+  # RDS configuration
+  rds_engine         = each.value.rds_engine
+  rds_instance_class = each.value.rds_instance_class
+  db_name            = each.value.db_name
+  db_username        = each.value.db_username
+  password_ssm_param = each.value.password_ssm_param
 
-  name_prefix = "${var.environment}-${local.region_short}"
+  # Security
+  ssh_allowed_cidrs = length(each.value.ssh_allowed_cidrs) > 0 ? each.value.ssh_allowed_cidrs : var.ssh_allowed_cidrs
 
-  db_name  = "app_db"
-  username = "app_user"
-
-  password_ssm_param = "/infra-aws/prod/mysql/password"
-
-  subnet_ids             = module.vpc.private_subnet_ids
-  vpc_security_group_ids = [module.security_groups.rds_sg_id]
-
-  instance_class        = "db.t3.micro"
-  backup_retention_days = 7
-
-  tags = local.base_tags
-}
-
-module "ec2" {
-  source = "../../../modules/ec2"
-
-  name_prefix = "${var.environment}-${local.region_short}"
-
-  subnet_id              = module.vpc.public_subnet_ids[0]
-  vpc_security_group_ids = [module.security_groups.app_sg_id]
-
-  instance_type     = "t3.small"
-  root_volume_size  = 30
-  associate_eip     = true
-
-  key_name  = var.ec2_key_name
-  user_data = file("${path.module}/user_data_app.sh")
-
-  tags = local.base_tags
+  # Tags
+  base_tags = merge(local.base_tags, {
+    Project = each.value.project_full != "" ? each.value.project_full : each.value.project_short
+  })
 }

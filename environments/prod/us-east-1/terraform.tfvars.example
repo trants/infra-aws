@@ -1,2 +1,57 @@
-ssh_allowed_cidrs = ["YOUR_PUBLIC_IP/32"]
-ec2_key_name = "your-keypair-name"
+# AWS Configuration
+aws_region = "us-east-1"
+
+# Shared Project Configuration (for VPC and shared resources)
+project      = "infra-aws"    # Full project name for shared resources
+environment  = "prod"         # dev, staging, prod
+
+# Cost Allocation
+cost_center = "engineering"   # For billing allocation
+owner       = "platform-team" # Team responsible for this infrastructure
+
+# Security (default for all projects, can be overridden per project)
+ssh_allowed_cidrs = ["YOUR_PUBLIC_IP/32"]  # Your public IP in CIDR format, e.g. 1.2.3.4/32
+ec2_key_name      = "your-keypair-name"     # Existing EC2 key pair name
+
+# ============================================================================
+# PROJECTS CONFIGURATION
+# Each project will have EC2 and RDS resources
+# ============================================================================
+
+projects = {
+  # Project 1: MyApp
+  myapp = {
+    project_short      = "myapp"
+    project_full       = "my-application"
+    ec2_purpose        = "api"
+    ec2_instance_type  = "t3.small"
+    ec2_count          = 1
+    rds_engine         = "mysql"
+    rds_instance_class = "db.t3.micro"
+    db_name            = "myapp_db"
+    db_username        = "myapp_user"
+    password_ssm_param = "/myapp/prod/mysql/password"
+    # ssh_allowed_cidrs = ["1.2.3.4/32"] # Optional: override default
+  }
+
+  # Project 2: Payment Service
+  payment = {
+    project_short      = "payment"
+    project_full       = "payment-service"
+    ec2_purpose        = "api"
+    ec2_instance_type  = "t3.medium"
+    ec2_count          = 2  # 2 instances for high availability
+    rds_engine         = "postgres"
+    rds_instance_class = "db.t3.small"
+    db_name            = "payment_db"
+    db_username        = "payment_user"
+    password_ssm_param = "/payment/prod/postgres/password"
+    # ssh_allowed_cidrs = ["1.2.3.4/32"] # Optional: override default
+  }
+
+  # Add more projects as needed...
+  # project3 = {
+  #   project_short      = "project3"
+  #   ...
+  # }
+}
