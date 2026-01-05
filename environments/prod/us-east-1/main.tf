@@ -37,3 +37,19 @@ module "vpc" {
 
   tags = local.base_tags
 }
+
+module "security_groups" {
+  source = "../../../modules/security-groups"
+
+  name_prefix = "${var.environment}-${local.region_short}"
+  vpc_id      = module.vpc.vpc_id
+
+  # SSH: chỉ cho IP của bạn (khuyến nghị set /32)
+  # Ví dụ: ["203.0.113.10/32"]
+  ssh_allowed_cidrs = var.ssh_allowed_cidrs
+
+  # Nếu chưa có ALB, tạm thời để 0.0.0.0/0 cho 80/443
+  allow_http_https_from_cidrs = ["0.0.0.0/0"]
+
+  tags = local.base_tags
+}

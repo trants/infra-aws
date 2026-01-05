@@ -170,6 +170,7 @@ uploads/*
 .terraform/
 .terraformrc
 terraform.rc
+*.tfvars
 
 #-----------------------------------------------------------------------------
 # BUILD ARTIFACTS AND RUNTIME FILES
