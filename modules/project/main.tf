@@ -19,7 +19,8 @@ module "security_groups" {
   vpc_id      = var.vpc_id
 
   ssh_allowed_cidrs         = var.ssh_allowed_cidrs
-  allow_http_https_from_cidrs = ["0.0.0.0/0"]
+  allow_http_https_from_cidrs = var.allow_http_https_from_cidrs
+  rds_port                  = var.rds_port
 
   tags = merge(var.base_tags, {
     Tier    = "app"
@@ -46,7 +47,8 @@ module "rds" {
   vpc_security_group_ids = [module.security_groups.rds_sg_id]
 
   instance_class        = var.rds_instance_class
-  backup_retention_days = 7
+  backup_retention_days = var.rds_backup_retention_days
+  apply_immediately     = var.rds_apply_immediately
 
   tags = merge(var.base_tags, {
     Tier    = "data"
@@ -66,12 +68,14 @@ module "ec2" {
   purpose         = var.ec2_purpose
   instance_index  = each.value + 1 # Start from 1
 
-  subnet_id              = var.public_subnet_ids[0]
+  # Distribute EC2 instances across AZs for high availability
+  subnet_id              = var.public_subnet_ids[each.value % length(var.public_subnet_ids)]
   vpc_security_group_ids = [module.security_groups.app_sg_id]
 
   instance_type    = var.ec2_instance_type
-  root_volume_size = 30
-  associate_eip    = true
+  root_volume_size = var.ec2_root_volume_size
+  associate_eip    = var.ec2_associate_eip
+  iam_instance_profile = var.ec2_iam_instance_profile
 
   key_name  = var.ec2_key_name
   user_data = var.ec2_user_data

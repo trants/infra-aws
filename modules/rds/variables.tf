@@ -65,6 +65,42 @@ variable "backup_retention_days" {
   default = 7
 }
 
+variable "apply_immediately" {
+  description = "Apply changes immediately (false = use maintenance window)"
+  type        = bool
+  default     = false
+}
+
+variable "backup_window" {
+  description = "Preferred backup window (UTC). Format: hh24:mi-hh24:mi"
+  type        = string
+  default     = "03:00-04:00"
+}
+
+variable "maintenance_window" {
+  description = "Preferred maintenance window (UTC). Format: ddd:hh24:mi-ddd:hh24:mi"
+  type        = string
+  default     = "sun:04:00-sun:05:00"
+}
+
+variable "performance_insights_enabled" {
+  description = "Enable Performance Insights"
+  type        = bool
+  default     = false
+}
+
+variable "monitoring_interval" {
+  description = "Enhanced monitoring interval in seconds (0, 60, 300)"
+  type        = number
+  default     = 0
+}
+
+variable "monitoring_role_arn" {
+  description = "IAM role ARN for enhanced monitoring (required if monitoring_interval > 0)"
+  type        = string
+  default     = ""
+}
+
 variable "tags" {
   type    = map(string)
   default = {}

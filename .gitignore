@@ -166,11 +166,12 @@ uploads/*
 # Terraform infrastructure configuration and state files
 *.tfstate
 *.tfstate.*
+*.tfvars
 .terraform.lock.hcl
 .terraform/
 .terraformrc
+backend.hcl
 terraform.rc
-*.tfvars
 
 #-----------------------------------------------------------------------------
 # BUILD ARTIFACTS AND RUNTIME FILES

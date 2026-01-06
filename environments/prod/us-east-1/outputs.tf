@@ -9,7 +9,17 @@ output "vpc_id" {
 
 output "vpc_name" {
   description = "Shared VPC name"
-  value       = module.vpc.vpc_id # You can add vpc_name output to VPC module if needed
+  value       = local.vpc_name
+}
+
+output "vpc_cidr" {
+  description = "Shared VPC CIDR block"
+  value       = module.vpc.vpc_cidr
+}
+
+output "vpc_arn" {
+  description = "Shared VPC ARN"
+  value       = module.vpc.vpc_arn
 }
 
 # ============================================================================

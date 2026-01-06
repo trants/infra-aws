@@ -70,6 +70,24 @@ variable "ec2_user_data" {
   default     = ""
 }
 
+variable "ec2_root_volume_size" {
+  description = "Root volume size in GB for EC2 instances"
+  type        = number
+  default     = 30
+}
+
+variable "ec2_associate_eip" {
+  description = "Whether to associate Elastic IP with EC2 instances"
+  type        = bool
+  default     = true
+}
+
+variable "ec2_iam_instance_profile" {
+  description = "IAM instance profile name or ARN for EC2 instances"
+  type        = string
+  default     = ""
+}
+
 # RDS configuration
 variable "rds_engine" {
   description = "Database engine: mysql, postgres, mariadb"
@@ -96,6 +114,30 @@ variable "db_username" {
 variable "password_ssm_param" {
   description = "SSM parameter path for database password"
   type        = string
+}
+
+variable "rds_backup_retention_days" {
+  description = "Number of days to retain RDS backups"
+  type        = number
+  default     = 7
+}
+
+variable "rds_apply_immediately" {
+  description = "Apply RDS changes immediately (false = use maintenance window)"
+  type        = bool
+  default     = false
+}
+
+variable "rds_port" {
+  description = "RDS database port (3306 for MySQL, 5432 for PostgreSQL)"
+  type        = number
+  default     = 3306
+}
+
+variable "allow_http_https_from_cidrs" {
+  description = "CIDR blocks allowed to access HTTP/HTTPS"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
 }
 
 # Security

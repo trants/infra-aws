@@ -48,3 +48,21 @@ variable "user_data" {
   type        = string
   default     = ""
 }
+
+variable "ami_id" {
+  description = "AMI ID to use (if empty, will use latest AL2023)"
+  type        = string
+  default     = ""
+}
+
+variable "iam_instance_profile" {
+  description = "IAM instance profile name or ARN for EC2 instance"
+  type        = string
+  default     = ""
+}
+
+variable "enable_detailed_monitoring" {
+  description = "Enable detailed CloudWatch monitoring (costs extra)"
+  type        = bool
+  default     = false
+}

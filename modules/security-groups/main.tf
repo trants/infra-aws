@@ -10,22 +10,24 @@ resource "aws_security_group" "app" {
   })
 }
 
-# HTTP
+# HTTP - allow from all specified CIDRs
 resource "aws_vpc_security_group_ingress_rule" "app_http" {
+  for_each         = toset(var.allow_http_https_from_cidrs)
   security_group_id = aws_security_group.app.id
   ip_protocol       = "tcp"
   from_port         = 80
   to_port           = 80
-  cidr_ipv4         = var.allow_http_https_from_cidrs[0]
+  cidr_ipv4         = each.value
 }
 
-# HTTPS
+# HTTPS - allow from all specified CIDRs
 resource "aws_vpc_security_group_ingress_rule" "app_https" {
+  for_each         = toset(var.allow_http_https_from_cidrs)
   security_group_id = aws_security_group.app.id
   ip_protocol       = "tcp"
   from_port         = 443
   to_port           = 443
-  cidr_ipv4         = var.allow_http_https_from_cidrs[0]
+  cidr_ipv4         = each.value
 }
 
 # Optional SSH (only if ssh_allowed_cidrs provided)
@@ -45,10 +47,10 @@ resource "aws_vpc_security_group_egress_rule" "app_all" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-# RDS SG: only allow MySQL from App SG
+# RDS SG: only allow database access from App SG
 resource "aws_security_group" "rds" {
   name        = "${var.name_prefix}-sg-rds"
-  description = "RDS security group (MySQL only from app SG)"
+  description = "RDS security group (database access from app SG)"
   vpc_id      = var.vpc_id
 
   tags = merge(var.tags, {
@@ -58,14 +60,16 @@ resource "aws_security_group" "rds" {
   })
 }
 
-resource "aws_vpc_security_group_ingress_rule" "rds_mysql_from_app" {
+resource "aws_vpc_security_group_ingress_rule" "rds_from_app" {
   security_group_id            = aws_security_group.rds.id
   ip_protocol                  = "tcp"
-  from_port                    = 3306
-  to_port                      = 3306
+  from_port                    = var.rds_port
+  to_port                      = var.rds_port
   referenced_security_group_id = aws_security_group.app.id
 }
 
+# RDS typically doesn't need egress, but keeping for compatibility
+# Consider removing if not needed
 resource "aws_vpc_security_group_egress_rule" "rds_all" {
   security_group_id = aws_security_group.rds.id
   ip_protocol       = "-1"

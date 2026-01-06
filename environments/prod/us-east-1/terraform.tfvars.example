@@ -3,11 +3,17 @@ aws_region = "us-east-1"
 
 # Shared Project Configuration (for VPC and shared resources)
 project      = "infra-aws"    # Full project name for shared resources
-environment  = "prod"         # dev, staging, prod
+environment  = "prod"         # dev, staging, prod (required, no default)
 
 # Cost Allocation
 cost_center = "engineering"   # For billing allocation
 owner       = "platform-team" # Team responsible for this infrastructure
+
+# VPC Configuration
+vpc_cidr            = "10.0.0.0/16"
+availability_zones  = []  # Empty = auto-detect, or specify: ["us-east-1a", "us-east-1b"]
+public_subnet_cidrs  = ["10.0.0.0/24", "10.0.1.0/24"]
+private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24"]
 
 # Security (default for all projects, can be overridden per project)
 ssh_allowed_cidrs = ["YOUR_PUBLIC_IP/32"]  # Your public IP in CIDR format, e.g. 1.2.3.4/32

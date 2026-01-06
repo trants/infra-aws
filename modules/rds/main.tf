@@ -36,7 +36,18 @@ resource "aws_db_instance" "this" {
   deletion_protection     = true
 
   storage_encrypted = true
-  apply_immediately = true
+  apply_immediately = var.apply_immediately
+
+  # Backup and maintenance windows
+  backup_window      = var.backup_window
+  maintenance_window = var.maintenance_window
+
+  # Performance Insights (optional)
+  performance_insights_enabled = var.performance_insights_enabled
+
+  # Monitoring
+  monitoring_interval = var.monitoring_interval > 0 ? var.monitoring_interval : null
+  monitoring_role_arn = var.monitoring_interval > 0 && var.monitoring_role_arn != "" ? var.monitoring_role_arn : null
 
   tags = merge(var.tags, {
     Name = "${var.name_prefix}-rds-${var.engine}-${var.role}"

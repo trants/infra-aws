@@ -9,11 +9,12 @@ data "aws_ami" "al2023" {
 }
 
 resource "aws_instance" "this" {
-  ami                         = data.aws_ami.al2023.id
+  ami                         = var.ami_id != "" ? var.ami_id : data.aws_ami.al2023.id
   instance_type               = var.instance_type
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = var.vpc_security_group_ids
   key_name                    = var.key_name
+  iam_instance_profile        = var.iam_instance_profile != "" ? var.iam_instance_profile : null
   associate_public_ip_address = true
 
   user_data = var.user_data != "" ? var.user_data : null
@@ -23,6 +24,9 @@ resource "aws_instance" "this" {
     volume_size = var.root_volume_size
     encrypted   = true
   }
+
+  # Enable detailed monitoring (optional, costs extra)
+  monitoring = var.enable_detailed_monitoring
 
   tags = merge(var.tags, {
     Name    = "${var.name_prefix}-ec2-${var.purpose}-${format("%02d", var.instance_index)}"

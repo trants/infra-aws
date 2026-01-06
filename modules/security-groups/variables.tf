@@ -26,6 +26,12 @@ variable "allow_http_https_from_cidrs" {
   default     = ["0.0.0.0/0"]
 }
 
+variable "rds_port" {
+  description = "RDS database port (3306 for MySQL, 5432 for PostgreSQL, etc.)"
+  type        = number
+  default     = 3306
+}
+
 variable "tags" {
   type    = map(string)
   default = {}
