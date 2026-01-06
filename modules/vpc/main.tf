@@ -76,6 +76,14 @@ resource "aws_route_table_association" "public" {
 locals {
   nat_count = var.enable_nat_gateway ? (var.single_nat_gateway ? 1 : length(var.azs)) : 0
   nat_subnets = var.enable_nat_gateway ? (var.single_nat_gateway ? [values(aws_subnet.public)[0].id] : [for s in aws_subnet.public : s.id]) : []
+  
+  # Map NAT gateways to their AZs for naming
+  nat_azs = var.enable_nat_gateway ? (
+    var.single_nat_gateway ? [var.azs[0]] : var.azs
+  ) : []
+  
+  # Extract AZ short code (e.g., us-east-1a -> 1a)
+  nat_az_short = [for az in local.nat_azs : replace(az, "/.*-/", "")]
 }
 
 resource "aws_eip" "nat" {
@@ -83,7 +91,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = merge(var.tags, {
-    Name = "${var.name}-eip-nat-${count.index + 1}"
+    Name = "${var.name}-eip-nat-${local.nat_az_short[count.index]}"
   })
 }
 
@@ -93,7 +101,7 @@ resource "aws_nat_gateway" "this" {
   subnet_id     = local.nat_subnets[count.index]
 
   tags = merge(var.tags, {
-    Name = "${var.name}-nat-${count.index + 1}"
+    Name = "${var.name}-nat-${local.nat_az_short[count.index]}"
   })
 
   depends_on = [aws_internet_gateway.this]

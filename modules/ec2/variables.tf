@@ -1,5 +1,5 @@
 variable "name_prefix" {
-  description = "Prefix for EC2 resources, e.g. infra-prod-use1"
+  description = "Prefix for EC2 instance resources, e.g. myapp-prod"
   type        = string
 }
 

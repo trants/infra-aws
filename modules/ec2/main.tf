@@ -29,7 +29,7 @@ resource "aws_instance" "this" {
   monitoring = var.enable_detailed_monitoring
 
   tags = merge(var.tags, {
-    Name    = "${var.name_prefix}-ec2-${var.purpose}-${format("%02d", var.instance_index)}"
+    Name    = "${var.name_prefix}-instance-${var.purpose}-${format("%02d", var.instance_index)}"
     Service = var.purpose
     Tier    = "app"
   })
