@@ -9,8 +9,8 @@ locals {
 
   region_short = lookup(local.region_short_map, var.aws_region, replace(var.aws_region, "/-|_/", ""))
 
-  # Shared VPC name (using main project name)
-  vpc_name = "digital-assets-${var.environment}-${local.region_short}-vpc"
+  # VPC name
+  vpc_name = "${var.project}-${var.environment}-${local.region_short}-vpc"
 
   # Standard tags (required for billing, monitoring, compliance)
   base_tags = {
@@ -72,7 +72,7 @@ module "projects" {
   ec2_instance_type = each.value.ec2_instance_type
   ec2_count         = each.value.ec2_count
   ec2_key_name      = var.ec2_key_name
-  ec2_user_data     = file("${path.module}/user_data_app.sh")
+  ec2_user_data     = file("${path.module}/user-data.sh")
 
   # RDS configuration
   rds_engine         = each.value.rds_engine

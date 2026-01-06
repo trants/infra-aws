@@ -1,7 +1,3 @@
-# ============================================================================
-# VPC OUTPUTS
-# ============================================================================
-
 output "vpc_id" {
   description = "Shared VPC ID"
   value       = module.vpc.vpc_id
@@ -22,10 +18,6 @@ output "vpc_arn" {
   value       = module.vpc.vpc_arn
 }
 
-# ============================================================================
-# PROJECTS OUTPUTS
-# ============================================================================
-
 output "projects" {
   description = "Map of all projects with their resources"
   value = {
@@ -43,7 +35,6 @@ output "projects" {
   }
 }
 
-# Convenience outputs for first project (if exists)
 output "first_project" {
   description = "Resources of the first project (for backward compatibility)"
   value = length(module.projects) > 0 ? {
