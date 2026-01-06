@@ -1,28 +1,25 @@
 # AWS Configuration
 aws_region = "us-east-1"
 
-# Shared Project Configuration (for VPC and shared resources)
+# Shared project config for VPC and shared resources
 project      = "infra-aws"    # Full project name for shared resources
-environment  = "prod"         # dev, staging, prod (required, no default)
+environment  = "prod"         # dev, staging, or prod (required)
 
 # Cost Allocation
-cost_center = "engineering"   # For billing allocation
-owner       = "platform-team" # Team responsible for this infrastructure
+cost_center = "engineering"   # Cost center for billing
+owner       = "platform-team" # Team owner of this infrastructure
 
 # VPC Configuration
 vpc_cidr            = "10.0.0.0/16"
-availability_zones  = []  # Empty = auto-detect, or specify: ["us-east-1a", "us-east-1b"]
+availability_zones  = []  # Empty auto-detects, or specify: ["us-east-1a", "us-east-1b"]
 public_subnet_cidrs  = ["10.0.0.0/24", "10.0.1.0/24"]
 private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24"]
 
-# Security (default for all projects, can be overridden per project)
+# Security defaults for all projects, can override per project
 ssh_allowed_cidrs = ["YOUR_PUBLIC_IP/32"]  # Your public IP in CIDR format, e.g. 1.2.3.4/32
 ec2_key_name      = "your-keypair-name"     # Existing EC2 key pair name
 
-# ============================================================================
-# PROJECTS CONFIGURATION
-# Each project will have EC2 and RDS resources
-# ============================================================================
+# Projects configuration: each project has EC2 and RDS resources
 
 projects = {
   # Project 1: MyApp
@@ -46,7 +43,7 @@ projects = {
     project_full       = "payment-service"
     ec2_purpose        = "api"
     ec2_instance_type  = "t3.medium"
-    ec2_count          = 2  # 2 instances for high availability
+    ec2_count          = 2  # Two instances for high availability
     rds_engine         = "postgres"
     rds_instance_class = "db.t3.small"
     db_name            = "payment_db"

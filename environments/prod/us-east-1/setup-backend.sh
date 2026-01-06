@@ -90,4 +90,3 @@ echo ""
 echo "  3. Initialize Terraform:"
 echo "     terraform init -backend-config=backend.hcl"
 echo ""
-

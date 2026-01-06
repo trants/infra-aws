@@ -66,7 +66,7 @@ variable "owner" {
   description = "Team/owner responsible for this infrastructure"
 }
 
-# VPC Configuration
+# VPC configuration
 variable "vpc_cidr" {
   type        = string
   default     = "10.0.0.0/16"
@@ -76,7 +76,7 @@ variable "vpc_cidr" {
 variable "availability_zones" {
   type        = list(string)
   default     = []
-  description = "List of availability zones. If empty, will use data source to get available AZs"
+  description = "List of availability zones. If empty, auto-detects available AZs"
 }
 
 variable "public_subnet_cidrs" {
@@ -89,7 +89,7 @@ variable "private_subnet_cidrs" {
   description = "CIDR blocks for private subnets (one per AZ)"
 }
 
-# Optional: AWS provider configuration
+# Optional AWS provider configuration
 variable "aws_profile" {
   type        = string
   default     = ""
@@ -99,5 +99,5 @@ variable "aws_profile" {
 variable "aws_assume_role_arn" {
   type        = string
   default     = ""
-  description = "IAM role ARN to assume (optional, for cross-account access)"
+  description = "IAM role ARN to assume for cross-account access (optional)"
 }
