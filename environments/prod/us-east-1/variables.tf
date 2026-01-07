@@ -28,6 +28,7 @@ variable "projects" {
     db_username      = string
     password_ssm_param = string
     ssh_allowed_cidrs = optional(list(string), [])
+    rds_allowed_cidrs = optional(list(string), [])
   }))
   description = "Map of projects to create. Each project will have EC2 and RDS."
   default     = {}

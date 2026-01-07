@@ -68,6 +68,16 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_app" {
   referenced_security_group_id = aws_security_group.app.id
 }
 
+# Optional: Allow direct RDS access from specified CIDRs (for Navicat, etc.)
+resource "aws_vpc_security_group_ingress_rule" "rds_from_cidrs" {
+  for_each          = toset(var.rds_allowed_cidrs)
+  security_group_id = aws_security_group.rds.id
+  ip_protocol       = "tcp"
+  from_port         = var.rds_port
+  to_port           = var.rds_port
+  cidr_ipv4         = each.value
+}
+
 # RDS typically doesn't need egress, but keeping for compatibility
 # Consider removing if not needed
 resource "aws_vpc_security_group_egress_rule" "rds_all" {

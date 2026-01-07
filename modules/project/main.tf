@@ -21,6 +21,7 @@ module "security_groups" {
   ssh_allowed_cidrs         = var.ssh_allowed_cidrs
   allow_http_https_from_cidrs = var.allow_http_https_from_cidrs
   rds_port                  = var.rds_port
+  rds_allowed_cidrs         = var.rds_allowed_cidrs
 
   tags = merge(var.base_tags, {
     Tier    = "app"

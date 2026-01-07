@@ -64,6 +64,9 @@ module "projects" {
 
   # Use project-specific SSH CIDRs or fallback to default
   ssh_allowed_cidrs = length(each.value.ssh_allowed_cidrs) > 0 ? each.value.ssh_allowed_cidrs : var.ssh_allowed_cidrs
+  
+  # RDS direct access CIDRs (for Navicat, etc.)
+  rds_allowed_cidrs = each.value.rds_allowed_cidrs
 
   base_tags = merge(local.base_tags, {
     Project = each.value.project_full != "" ? each.value.project_full : each.value.project_short

@@ -142,6 +142,12 @@ variable "ssh_allowed_cidrs" {
   default     = []
 }
 
+variable "rds_allowed_cidrs" {
+  description = "CIDR blocks allowed to access RDS directly (for Navicat, etc.). Empty by default - only allows from App SG."
+  type        = list(string)
+  default     = []
+}
+
 # Tags
 variable "base_tags" {
   description = "Base tags to apply to all resources"

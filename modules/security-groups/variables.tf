@@ -32,6 +32,12 @@ variable "rds_port" {
   default     = 3306
 }
 
+variable "rds_allowed_cidrs" {
+  description = "CIDR blocks allowed to access RDS directly (for Navicat, etc.). Empty by default - only allows from App SG."
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   type    = map(string)
   default = {}
