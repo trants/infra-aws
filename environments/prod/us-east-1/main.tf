@@ -1,15 +1,5 @@
 locals {
-  # Map region names to short codes
-  region_short_map = {
-    us-east-1      = "use1"
-    us-west-2      = "usw2"
-    eu-west-1      = "euw1"
-    ap-southeast-1 = "apse1"
-  }
-
-  region_short = lookup(local.region_short_map, var.aws_region, replace(var.aws_region, "/-|_/", ""))
-
-  vpc_name = "${var.project}-${var.environment}-${local.region_short}-vpc"
+  vpc_name = "${var.project}-${var.environment}-vpc"
 
   # Standard tags for billing, monitoring, and compliance
   base_tags = {
@@ -54,7 +44,6 @@ module "projects" {
   project_short   = each.value.project_short
   project_full    = each.value.project_full != "" ? each.value.project_full : each.value.project_short
   environment     = var.environment
-  region_short    = local.region_short
 
   # VPC is shared across all projects
   vpc_id              = module.vpc.vpc_id

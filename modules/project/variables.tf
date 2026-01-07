@@ -19,11 +19,6 @@ variable "environment" {
   type        = string
 }
 
-variable "region_short" {
-  description = "Short region code, e.g. use1"
-  type        = string
-}
-
 # VPC configuration (shared)
 variable "vpc_id" {
   description = "VPC ID (shared across projects)"

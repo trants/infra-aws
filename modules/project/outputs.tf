@@ -5,7 +5,7 @@ output "project_key" {
 
 output "name_prefix" {
   description = "Name prefix for this project"
-  value       = "${var.project_short}-${var.environment}-${var.region_short}"
+  value       = "${var.project_short}-${var.environment}"
 }
 
 # Security Groups

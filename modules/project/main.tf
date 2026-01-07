@@ -4,7 +4,7 @@
 # ============================================================================
 
 locals {
-  name_prefix = "${var.project_short}-${var.environment}-${var.region_short}"
+  name_prefix = "${var.project_short}-${var.environment}"
 }
 
 # ============================================================================
